@@ -19,7 +19,7 @@ function connect (event) {
     // Get the name from the user.
     username = document.querySelector("#name").value.trim();
 
-    // Swicth from login to chat
+    // Switch from login to chat
     usernameInput.style.display = "none";
     connectingElement.style.display = "block";
 

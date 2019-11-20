@@ -18,6 +18,7 @@ public class ChatController {
 
     private final ChatService chatService;
 
+
     @Autowired
     public ChatController (ChatService chatService){
         this.chatService = chatService;
@@ -31,9 +32,6 @@ public class ChatController {
     public Message messageLog (Message message) throws Exception{
 
         chatService.newMessage(message);
-//        return ("User : " + message.getAuthorName() + " sent " + message.getMessage());
         return message;
-
-//        return new ChatService("User " + HtmlUtils.htmlEscape(message.getAuthorName()) + " said : " + HtmlUtils.htmlEscape(message.getMessage()));
     }
 }
