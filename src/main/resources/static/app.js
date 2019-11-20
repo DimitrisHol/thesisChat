@@ -21,84 +21,58 @@ function connect (event) {
 
     // Switch from login to chat
     usernameInput.style.display = "none";
-    connectingElement.style.display = "block";
+    chatArea.style.display = "block";
 
     // Create the connection with websocket
     var socket = new SockJS('http://localhost:8080/gs-guide-websocket');
     stompClient = Stomp.over(socket);
 
-    // Switch to the chat.
-    // setTimeout(function() {
-    //     connectingElement.style.display = "none";
-    //     chatArea.style.display = "block";
-
-    //     // Connect to the websocket.
-    //     stompClient.connect({} , onConnected , onError)
-    // } , 500)
-
-    connectingElement.style.display = "none";
-    chatArea.style.display = "block";
-
     // Connect to the websocket.
     stompClient.connect({} , onConnected , onError)
-
-
-    
-
-    
 
     // Prevent the page from reloading, (we bypass the default form action)
     event.preventDefault();
 
-    
 }
 
 // Successful connection
 function onConnected (){
 
+    // Send the username to the server, to add you to the Active Users list.
+    loginContent = {username : username}
+    stompClient.send("/app/login" , {} , JSON.stringify(loginContent))
+    console.log("We are sending" , loginContent);
+
+
     // Subscribe to "/topic/public"
     stompClient.subscribe('/topic/greetings', onMessageReceived);
-
-
-    // Tell your username to the server.
-    // stompClient.send
-
 }
 
 // Something went wrong
 function onError (error) {
-
     console.log(error);
-    
-
     connectingElement.textContent = error;
     connectingElement.style.color = "red";
-
-    
-
 }
 
+// Handling when the user sends the messages
 function sendMessage (event) {
 
+    // Get the message content
     var message = document.querySelector("#message").value.trim();
 
-    content = {authorName : username, message : message }
-
+    // Bundle up the info of author , and message text
+    messageContent = {authorName : username, message : message }
     document.querySelector("#message").value = ""
+    stompClient.send("/app/hello" , {} , JSON.stringify(messageContent))
 
+    console.log("We are sending" , messageContent);
 
-
-    console.log("We are sending" , content);
-    
-
-    stompClient.send("/app/hello" , {} , JSON.stringify(content))
-
-
-
-
+// Prevent the page from reloading, (we bypass the default form action)
     event.preventDefault();
 }
 
+// Handling when something is posted on the subscribed channel
 function onMessageReceived(payload){
 
     console.log(payload.body);
