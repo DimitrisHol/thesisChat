@@ -14,7 +14,7 @@ public class ChatService {
 
 
     @Autowired
-    public ChatService(@Qualifier("fakeDao") MessageDao messageDao){
+    public ChatService(@Qualifier("postgres") MessageDao messageDao){
         this.messageDao = messageDao;
     }
 

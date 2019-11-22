@@ -8,7 +8,7 @@ public class User {
     private final int id;
     private final String username;
 
-    //Maybe ArrayList with messages, we'll see.
+    //Maybe ArrayList with messages, we'll see
 
     public User(int id, String username) {
         this.id = id;

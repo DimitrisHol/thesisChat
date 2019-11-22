@@ -1,7 +1,10 @@
 package hello.controllerAPI;
 
 
+import hello.dao.LoginAccessService;
 import hello.model.Message;
+import hello.model.User;
+import hello.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -16,7 +19,6 @@ public class WebSocketEventListener {
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
-
 
     // User send the first connection message, not already connected.
     @EventListener
@@ -39,6 +41,13 @@ public class WebSocketEventListener {
             // Send a message to the chat the user has left the channel
             Message chatMessage = new Message(author, "has left the chat");
             messagingTemplate.convertAndSend("/topic/greetings", chatMessage);
+
+            User user = new User(0 , author);
+
+            System.out.println(user.getUsername() + " " + user.getId());
+
+            System.out.println("We are sending " + user + user.getUsername() + user.getId());
+            messagingTemplate.convertAndSend("/logout", user);
         }
     }
 }

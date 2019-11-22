@@ -4,10 +4,11 @@ import java.util.Date;
 
 public class Message {
 
+    private int id;
     private String message;
     private String timeSent;
     private int authorId;
-    private String authorName;
+    private String authorName; // maybe depreciated
 
 
     public Message(String authorName , String message) {
@@ -15,7 +16,7 @@ public class Message {
         this.message = message;
         this.authorName = authorName;
 
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("YY-MM-DD HH:mm:ss");
         Date date = new Date();
 
         this.timeSent = formatter.format(date);

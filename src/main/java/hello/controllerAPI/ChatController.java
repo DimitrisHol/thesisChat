@@ -34,4 +34,7 @@ public class ChatController {
         chatService.newMessage(message);
         return message;
     }
+
+
+
 }

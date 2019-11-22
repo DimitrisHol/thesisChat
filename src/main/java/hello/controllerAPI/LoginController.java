@@ -28,11 +28,24 @@ public class LoginController {
     // A user enters the chat, sends a message to topic /login
     // We temporarily log them into the userList data structure.
     @MessageMapping("/login")
-    public void messageLog (User user , SimpMessageHeaderAccessor headAccessor) throws Exception{
+    @SendTo("/topic/greetings")
+    public Message userLogin (User user , SimpMessageHeaderAccessor headAccessor) throws Exception{
 
-        System.out.println("We got your message " + user.getUsername());
+//        System.out.println("We got your message " + user.getUsername());
         // Websocket implementation to keep track of who is online? or something like that
         headAccessor.getSessionAttributes().put("author" , user.getUsername());
         loginService.userJoined(user);
+
+        Message message = new Message(user.getUsername(), "has joined the chat");
+        return message;
+    }
+
+
+    @MessageMapping("/logout")
+    public void userLogout (User user) throws Exception{
+
+        System.out.println("Received the user" + user.getId() + " " + user.getUsername());
+
+        loginService.userLeft(user);
     }
 }

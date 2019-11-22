@@ -1,0 +1,6 @@
+app:
+  datasource:
+    jdbcUrl: jdbc:postgresql://localhost:5432/migrationchat
+    username: postgres
+    password: password
+    poolsize: 30 # How many active connections running concurrently
