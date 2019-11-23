@@ -7,6 +7,7 @@ var messageForm = document.querySelector("#messageForm");
 var usernameInput = document.querySelector("#username-page-container");
 var chatArea = document.querySelector("#chat-page");
 var connectingElement = document.querySelector('.connecting');
+var flag = 0;
 
 // Message area
 
@@ -15,7 +16,7 @@ var chat = document.querySelector("#messageArea");
 
 
 function connect (event) {
-    
+
     // Get the name from the user.
     username = document.querySelector("#name").value.trim();
 
@@ -41,10 +42,11 @@ function onConnected (){
     // Send the username to the server, to add you to the Active Users list.
     loginContent = {username : username}
     stompClient.send("/app/login" , {} , JSON.stringify(loginContent))
-    console.log("We are sending" , loginContent);
+    stompClient.send("/app/chatlogrequest" , {} , JSON.stringify(loginContent))
 
 
-    // Subscribe to "/topic/public"
+    // Subscribe to  /topic/chatLog for the past messages and "/topic/greetings" for new messages
+    stompClient.subscribe('/topic/chatlogresponse', onPastLogsReceived);
     stompClient.subscribe('/topic/greetings', onMessageReceived);
 }
 
@@ -72,26 +74,59 @@ function sendMessage (event) {
     event.preventDefault();
 }
 
+function onPastLogsReceived(payload){
+
+
+
+    console.log("Hello something is here ");
+    if (flag == 0){
+
+
+        message = JSON.parse(payload.body);
+
+        message.forEach(element => {
+
+                    authorName = element.authorName;
+                    message = element.message;
+                    timeSent = element.timeSent;
+
+                    time = timeSent.slice(11 , 16)
+
+                    toAdd = authorName + " : " +  message + " at " + time;
+
+                    // Create a list item
+                    var messageElement = document.createElement("li");
+                    var messageText = document.createTextNode(toAdd);
+
+                    messageElement.appendChild(messageText);
+
+                    chat.appendChild(messageElement);
+                });
+        flag = 1;
+    }
+
+
+}
+
 // Handling when something is posted on the subscribed channel
 function onMessageReceived(payload){
 
-    console.log(payload.body);
+//    console.log(payload.body);
     message = JSON.parse(payload.body);
 
-    toAdd = message.authorName + " : " +  message.message + " at " + message.timeSent;
+    time = message.timeSent.slice(11 , 16)
+    toAdd = message.authorName + " : " +  message.message + " at " + time;
 
-
-    // Create a list item
+        // Create a list item
     var messageElement = document.createElement("li");
     var messageText = document.createTextNode(toAdd);
 
     messageElement.appendChild(messageText);
-    
+
     chat.appendChild(messageElement);
 
-    
-
 }
+
 
 
 usernameForm.addEventListener("submit" , connect , true)

@@ -1,25 +1,30 @@
 package hello.model;
 
-import java.util.ArrayList;
-
 public class User {
 
-    //TODO change it to UUID
-    private final int id;
+    private final String id;
     private final String username;
 
     //Maybe ArrayList with messages, we'll see
 
-    public User(int id, String username) {
+    public User(String id, String username) {
         this.id = id;
         this.username = username;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
+                '}';
     }
 }

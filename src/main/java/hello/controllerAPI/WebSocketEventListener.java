@@ -1,10 +1,8 @@
 package hello.controllerAPI;
 
 
-import hello.dao.LoginAccessService;
 import hello.model.Message;
 import hello.model.User;
-import hello.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -12,6 +10,8 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+
+import java.sql.Timestamp;
 
 @Component
 public class WebSocketEventListener {
@@ -39,10 +39,10 @@ public class WebSocketEventListener {
         if (author != null) {
 
             // Send a message to the chat the user has left the channel
-            Message chatMessage = new Message(author, "has left the chat");
+            Message chatMessage = new Message(author, "has left the chat",  new Timestamp(System.currentTimeMillis()));
             messagingTemplate.convertAndSend("/topic/greetings", chatMessage);
 
-            User user = new User(0 , author);
+            User user = new User("0" , author);
 
             System.out.println(user.getUsername() + " " + user.getId());
 

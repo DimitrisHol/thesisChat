@@ -1,27 +1,21 @@
 package hello.model;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import java.sql.Timestamp;
 
 public class Message {
 
     private int id;
     private String message;
-    private String timeSent;
+    private Timestamp timeSent;
     private int authorId;
     private String authorName; // maybe depreciated
 
 
-    public Message(String authorName , String message) {
+    public Message(String authorName , String content, Timestamp timestamp) {
 
-        this.message = message;
+        this.message = content;
         this.authorName = authorName;
-
-        SimpleDateFormat formatter = new SimpleDateFormat("YY-MM-DD HH:mm:ss");
-        Date date = new Date();
-
-        this.timeSent = formatter.format(date);
-
-
+        this.timeSent = timestamp;
     }
 
     public String getMessage() {
@@ -32,11 +26,19 @@ public class Message {
         this.message = message;
     }
 
-    public String getTimeSent() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Timestamp getTimeSent() {
         return timeSent;
     }
 
-    public void setTimeSent(String timeSent) {
+    public void setTimeSent(Timestamp timeSent) {
         this.timeSent = timeSent;
     }
 

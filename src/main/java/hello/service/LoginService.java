@@ -1,8 +1,6 @@
 package hello.service;
 
-import hello.controllerAPI.LoginController;
 import hello.dao.LoginDao;
-import hello.dao.MessageDao;
 import hello.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

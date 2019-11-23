@@ -1,6 +1,7 @@
 package hello.dao;
 
 import hello.model.Message;
+import hello.model.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 
 
 @Repository("fakeDao")
-public class ChatMessageAccessService implements MessageDao{
+public class ChatMessageAccessService implements chatDao {
 
     private static List<Message> DB = new ArrayList<>();
 
@@ -26,7 +27,17 @@ public class ChatMessageAccessService implements MessageDao{
     }
 
     @Override
-    public List<Message> selectAllMessages() {
+    public List<Message> selectRecentMessages() {
         return DB;
+    }
+
+    @Override
+    public void userLoggedIn(User user) {
+
+    }
+
+    @Override
+    public void userLoggedOut(User user) {
+
     }
 }
