@@ -2,17 +2,17 @@ package hello.model;
 
 public class User {
 
-    private final String id;
+    private final int id;
     private final String username;
 
     //Maybe ArrayList with messages, we'll see
 
-    public User(String id, String username) {
+    public User(int id, String username) {
         this.id = id;
         this.username = username;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 

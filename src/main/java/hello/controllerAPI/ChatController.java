@@ -11,6 +11,8 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 
@@ -33,8 +35,8 @@ public class ChatController {
     @SendTo("/topic/greetings")
     public Message messageLog (Message message) throws Exception{
 
-        chatService.newMessage(message);
-        return message;
+        return chatService.newMessage(message);
+
     }
 
     // A user enters the chat, sends a message to topic /login
@@ -49,8 +51,16 @@ public class ChatController {
         // Set the name of the user to notify chat when he leaves.
         headAccessor.getSessionAttributes().put("author" , user.getUsername());
 
+
+        String authorUsername = user.getUsername();
+        String content = "has joined the chat";
+
+        Date date= new Date();
+        long time = date.getTime();
+        Timestamp timestamp = new Timestamp(time);
+
         // Send a notification to the chat that the user has joined the chat.
-        Message message = new Message(user.getUsername(), "has joined the chat");
+        Message message = new Message(authorUsername, content, timestamp);
 
         return message;
     }

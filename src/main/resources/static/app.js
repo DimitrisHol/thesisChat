@@ -1,4 +1,3 @@
-
 // For event listener
 var usernameForm = document.querySelector("#usernameForm");
 var messageForm = document.querySelector("#messageForm");
@@ -7,7 +6,8 @@ var messageForm = document.querySelector("#messageForm");
 var usernameInput = document.querySelector("#username-page-container");
 var chatArea = document.querySelector("#chat-page");
 var connectingElement = document.querySelector('.connecting');
-var flag = 0;
+
+
 
 // Message area
 
@@ -42,12 +42,18 @@ function onConnected (){
     // Send the username to the server, to add you to the Active Users list.
     loginContent = {username : username}
     stompClient.send("/app/login" , {} , JSON.stringify(loginContent))
-    stompClient.send("/app/chatlogrequest" , {} , JSON.stringify(loginContent))
 
 
-    // Subscribe to  /topic/chatLog for the past messages and "/topic/greetings" for new messages
-    stompClient.subscribe('/topic/chatlogresponse', onPastLogsReceived);
+    // Subscribe to "/topic/greetings" for new messages
     stompClient.subscribe('/topic/greetings', onMessageReceived);
+    var url = "http://localhost:8080/chatlog";
+
+    axios.get(url)
+        .then(function(response){
+
+            onPastLogsReceived(response);
+            console.log(response);
+        })
 }
 
 // Something went wrong
@@ -75,35 +81,22 @@ function sendMessage (event) {
 }
 
 function onPastLogsReceived(payload){
+    payload.data.reverse().forEach(element => {
+//        console.log(element);
+        authorName = element.authorName;
+        message = element.message;
+        timeSent = element.timeSent.slice(11 , 16);
 
+        toAdd = authorName + " : " +  message + " at " + timeSent;
 
+        // Create a list item
+        var messageElement = document.createElement("li");
+        var messageText = document.createTextNode(toAdd);
 
-    console.log("Hello something is here ");
-    if (flag == 0){
+        messageElement.appendChild(messageText);
 
-
-        message = JSON.parse(payload.body);
-
-        message.forEach(element => {
-
-                    authorName = element.authorName;
-                    message = element.message;
-                    timeSent = element.timeSent;
-
-                    time = timeSent.slice(11 , 16)
-
-                    toAdd = authorName + " : " +  message + " at " + time;
-
-                    // Create a list item
-                    var messageElement = document.createElement("li");
-                    var messageText = document.createTextNode(toAdd);
-
-                    messageElement.appendChild(messageText);
-
-                    chat.appendChild(messageElement);
-                });
-        flag = 1;
-    }
+        chat.appendChild(messageElement);
+    });
 
 
 }
@@ -127,8 +120,6 @@ function onMessageReceived(payload){
 
 }
 
-
-
 usernameForm.addEventListener("submit" , connect , true)
 messageForm.addEventListener("submit" , sendMessage , true)
 
@@ -139,12 +130,7 @@ messageForm.addEventListener("submit" , sendMessage , true)
 Timeline of javascript : 
 
 1) get the referrence with the querySelector of the login form. 
-
 2) add the event listened to the submition of the username.
-
-3) when the user enters the username and submits, we trigger the connect function 
-
+3) when the user enters the username and submits, we trigger the connect function
 Connect function get's the name , connects to the websocket.
-
-
 */

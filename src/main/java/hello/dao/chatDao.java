@@ -8,7 +8,7 @@ import java.util.List;
 public interface chatDao {
 
 
-    void newMessage(Message message);
+    Message newMessage(Message message);
     List<Message> selectRecentMessages();
     void userLoggedIn(User user);
     void userLoggedOut(User user);

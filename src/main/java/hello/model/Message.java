@@ -11,6 +11,7 @@ public class Message {
     private String authorName; // maybe depreciated
 
 
+    // This is invoked when we get the message from the database.
     public Message(String authorName , String content, Timestamp timestamp) {
 
         this.message = content;

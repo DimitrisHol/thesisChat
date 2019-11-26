@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Repository("postgres")
@@ -21,33 +21,38 @@ public class ChatDatabaseAccessRepository implements chatDao {
 
     // New message arrived, store it in the database.
     @Override
-    public void newMessage(Message message) {
+    public Message newMessage(Message message) {
 
-        int author_id = Integer.valueOf(userNameLookUp(message.getAuthorName()).getId());
+        //Message has the author name, we need to get the author_id to insert into the database.
+        User author = userNameLookUp(message.getAuthorName());
+        int author_id = author.getId();
+
         String content = message.getMessage();
-        Timestamp timestamp = message.getTimeSent();
 
-
-
+        Date date= new Date();
+        long time = date.getTime();
+        Timestamp timestamp = new Timestamp(time);
 
         final String sql  = "INSERT INTO messages(author_id , content, submitted_at) VALUES (? , ? , ?)";
         jdbcTemplate.update(sql , author_id, content, timestamp);
+
+        return new Message(message.getAuthorName() , content , timestamp);
     }
 
     // When the a users joins the chat, return the 10 most recent messages back.
     @Override
     public List<Message> selectRecentMessages() {
 
-        final String sql = "select username , content from users inner join messages on users.user_id = messages.author_id;";
+        final String sql = "select username , content, submitted_at from users inner join messages on users.user_id = author_id order by submitted_at desc limit 10;";
 
         List<Message> messages = jdbcTemplate.query(sql, (resultSet,i) -> {
 
             String author = resultSet.getString("username");
             String content = resultSet.getString("content");
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-//            String timeStamp  = dateFormat.format(resultSet.getTimestamp("submitted_at"));
             Timestamp timeStamp  = resultSet.getTimestamp("submitted_at");
+
+            // Convert
+//            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
             return new Message(author , content, timeStamp);
         });
@@ -86,7 +91,7 @@ public class ChatDatabaseAccessRepository implements chatDao {
                     new Object[]{username},
                     (resultSet, i) ->
                             new User(
-                                    String.valueOf(resultSet.getInt("user_id")) ,
+                                    resultSet.getInt("user_id") ,
                                     resultSet.getString("username")
                             ));
             return user;
@@ -104,16 +109,3 @@ public class ChatDatabaseAccessRepository implements chatDao {
 
     }
 }
-
-
-
-
-// WHAT WE NEED TO TEST:
-
-
-// - Timestamps
-// - serial
-// -
-// -
-// -
-// -

@@ -23,9 +23,9 @@ public class ChatService {
 
     // Methods related to Messages.
 
-    public void newMessage(Message message) {
+    public Message newMessage(Message message) {
 
-        chatDao.newMessage(message);
+        return chatDao.newMessage(message);
     }
 
     public List<Message> returnRecentMessages() {

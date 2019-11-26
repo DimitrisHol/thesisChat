@@ -42,7 +42,7 @@ public class WebSocketEventListener {
             Message chatMessage = new Message(author, "has left the chat",  new Timestamp(System.currentTimeMillis()));
             messagingTemplate.convertAndSend("/topic/greetings", chatMessage);
 
-            User user = new User("0" , author);
+            User user = new User(0 , author);
 
             System.out.println(user.getUsername() + " " + user.getId());
 
