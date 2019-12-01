@@ -25,8 +25,10 @@ function connect (event) {
     chatArea.style.display = "block";
 
     // Create the connection with websocket
-    var socket = new SockJS('http://localhost:8080/gs-guide-websocket');
+   var socket = new SockJS('http://localhost:8400/gs-guide-websocket');
+    // var socket = new SockJS('http://localhost:8762/chat/gs-guide-websocket');
     stompClient = Stomp.over(socket);
+
 
     // Connect to the websocket.
     stompClient.connect({} , onConnected , onError)
@@ -39,20 +41,26 @@ function connect (event) {
 // Successful connection
 function onConnected (){
 
-    // Send the username to the server, to add you to the Active Users list.
-    loginContent = {username : username}
-    stompClient.send("/app/login" , {} , JSON.stringify(loginContent))
+
 
 
     // Subscribe to "/topic/greetings" for new messages
     stompClient.subscribe('/topic/greetings', onMessageReceived);
-    var url = "http://localhost:8080/chatlog";
+//    var url = "http://localhost:8400/chatlog";
+    var url = "http://localhost:8762/chat/chatlog";
 
     axios.get(url)
         .then(function(response){
 
             onPastLogsReceived(response);
+            // Send the username to the server, to add you to the Active Users list.
+            loginContent = {username : username}
+            stompClient.send("/app/login" , {} , JSON.stringify(loginContent))
             console.log(response);
+        })
+        .catch(function(error){
+            console.log(error);
+
         })
 }
 
@@ -87,7 +95,7 @@ function onPastLogsReceived(payload){
         message = element.message;
         timeSent = element.timeSent.slice(11 , 16);
 
-        toAdd = authorName + " : " +  message + " at " + timeSent;
+        toAdd = authorName + " : " +  message + " -- " + timeSent;
 
         // Create a list item
         var messageElement = document.createElement("li");
@@ -108,7 +116,7 @@ function onMessageReceived(payload){
     message = JSON.parse(payload.body);
 
     time = message.timeSent.slice(11 , 16)
-    toAdd = message.authorName + " : " +  message.message + " at " + time;
+    toAdd = message.authorName + " : " +  message.message + " -- " + time;
 
         // Create a list item
     var messageElement = document.createElement("li");
@@ -133,4 +141,9 @@ Timeline of javascript :
 2) add the event listened to the submition of the username.
 3) when the user enters the username and submits, we trigger the connect function
 Connect function get's the name , connects to the websocket.
+
+var test = document.querySelector("#messageArea");
+for (let item of test.children) { console.log(item.firstChild.data)}
+
 */
+

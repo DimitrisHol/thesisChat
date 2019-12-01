@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 
 
 @CrossOrigin(origins = "*" , allowedHeaders = "*")
@@ -65,20 +64,7 @@ public class ChatController {
         return message;
     }
 
-    @MessageMapping("/chatlogrequest")
-    @SendTo("/topic/chatlogresponse")
-    public List<Message> chatLog (User user) throws Exception{
 
-        System.out.println(user.toString());
-
-        // Populate the chat with 10 past messages.  (new method, receive the list, loop to populate it, in the end we are returning a list of Messages, not a simple message.)
-        List<Message> recentMessages = chatService.returnRecentMessages();
-
-        System.out.println(recentMessages.toString());
-
-        return recentMessages;
-
-    }
 
 
     // Handle when the user leaves the chat. (It is invoked by the WebSocketEventListener class)
