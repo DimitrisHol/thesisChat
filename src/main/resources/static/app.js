@@ -48,6 +48,7 @@ function onConnected (){
     stompClient.subscribe('/topic/greetings', onMessageReceived);
 //    var url = "http://localhost:8400/chatlog";
     var url = "http://localhost:8762/chat/chatlog";
+    var url = "http://localhost:8400/chatlog";
 
     axios.get(url)
         .then(function(response){
