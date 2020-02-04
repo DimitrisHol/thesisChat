@@ -20,6 +20,7 @@ public class ChatLogController {
         this.chatService = chatService;
     }
 
+    // This is exposing the chatlog so the app.js can make a GET request.
     @RequestMapping("/chatlog")
     public List<Message> chatLog() throws Exception {
 

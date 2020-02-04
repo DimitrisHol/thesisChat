@@ -1,4 +1,3 @@
-
 // For event listener
 var usernameForm = document.querySelector("#usernameForm");
 var messageForm = document.querySelector("#messageForm");
@@ -8,6 +7,8 @@ var usernameInput = document.querySelector("#username-page-container");
 var chatArea = document.querySelector("#chat-page");
 var connectingElement = document.querySelector('.connecting');
 
+
+
 // Message area
 
 var chat = document.querySelector("#messageArea");
@@ -15,110 +16,118 @@ var chat = document.querySelector("#messageArea");
 
 
 function connect (event) {
-    
+
     // Get the name from the user.
     username = document.querySelector("#name").value.trim();
 
-    // Swicth from login to chat
+    // Switch from login to chat
     usernameInput.style.display = "none";
-    connectingElement.style.display = "block";
+    chatArea.style.display = "block";
 
     // Create the connection with websocket
-    var socket = new SockJS('http://localhost:8080/gs-guide-websocket');
+   var socket = new SockJS('http://localhost:8400/gs-guide-websocket');
+    // var socket = new SockJS('http://localhost:8762/chat/gs-guide-websocket');
     stompClient = Stomp.over(socket);
 
-    // Switch to the chat.
-    // setTimeout(function() {
-    //     connectingElement.style.display = "none";
-    //     chatArea.style.display = "block";
-
-    //     // Connect to the websocket.
-    //     stompClient.connect({} , onConnected , onError)
-    // } , 500)
-
-    connectingElement.style.display = "none";
-    chatArea.style.display = "block";
 
     // Connect to the websocket.
     stompClient.connect({} , onConnected , onError)
 
-
-    
-
-    
-
     // Prevent the page from reloading, (we bypass the default form action)
     event.preventDefault();
 
-    
 }
 
 // Successful connection
 function onConnected (){
 
-    // Subscribe to "/topic/public"
+
+
+
+    // Subscribe to "/topic/greetings" for new messages
     stompClient.subscribe('/topic/greetings', onMessageReceived);
+//    var url = "http://localhost:8400/chatlog";
+    var url = "http://localhost:8762/chat/chatlog";
+    var url = "http://localhost:8400/chatlog";
 
+    axios.get(url)
+        .then(function(response){
 
-    // Tell your username to the server.
-    // stompClient.send
+            onPastLogsReceived(response);
+            // Send the username to the server, to add you to the Active Users list.
+            loginContent = {username : username}
+            stompClient.send("/app/login" , {} , JSON.stringify(loginContent))
+            console.log(response);
+        })
+        .catch(function(error){
+            console.log(error);
 
+        })
 }
 
 // Something went wrong
 function onError (error) {
-
     console.log(error);
-    
-
     connectingElement.textContent = error;
     connectingElement.style.color = "red";
-
-    
-
 }
 
+// Handling when the user sends the messages
 function sendMessage (event) {
 
+    // Get the message content
     var message = document.querySelector("#message").value.trim();
 
-    content = {authorName : username, message : message }
-
+    // Bundle up the info of author , and message text
+    messageContent = {authorName : username, message : message }
     document.querySelector("#message").value = ""
+    stompClient.send("/app/hello" , {} , JSON.stringify(messageContent))
 
+    console.log("We are sending" , messageContent);
 
-
-    console.log("We are sending" , content);
-    
-
-    stompClient.send("/app/hello" , {} , JSON.stringify(content))
-
-
-
-
+// Prevent the page from reloading, (we bypass the default form action)
     event.preventDefault();
 }
 
+function onPastLogsReceived(payload){
+    payload.data.reverse().forEach(element => {
+//        console.log(element);
+        authorName = element.authorName;
+        message = element.message;
+        timeSent = element.timeSent.slice(11 , 16);
+
+        toAdd = authorName + " : " +  message + " -- " + timeSent;
+
+        // Create a list item
+        var messageElement = document.createElement("li");
+        var messageText = document.createTextNode(toAdd);
+
+        messageElement.appendChild(messageText);
+
+        chat.appendChild(messageElement);
+    });
+
+
+}
+
+// Handling when something is posted on the subscribed channel
 function onMessageReceived(payload){
 
-    console.log(payload.body);
+//    console.log(payload.body);
     message = JSON.parse(payload.body);
 
-    toAdd = message.authorName + " : " +  message.message + " at " + message.timeSent;
+    time = message.timeSent.slice(11 , 16)
+    toAdd = message.authorName + " : " +  message.message + " -- " + time;
 
-
-    // Create a list item
+        // Create a list item
     var messageElement = document.createElement("li");
     var messageText = document.createTextNode(toAdd);
 
     messageElement.appendChild(messageText);
-    
+
     chat.appendChild(messageElement);
 
-    
-
 }
-
 
 usernameForm.addEventListener("submit" , connect , true)
 messageForm.addEventListener("submit" , sendMessage , true)
@@ -130,12 +139,12 @@ messageForm.addEventListener("submit" , sendMessage , true)
 Timeline of javascript : 
 
 1) get the referrence with the querySelector of the login form. 
-
 2) add the event listened to the submition of the username.
-
-3) when the user enters the username and submits, we trigger the connect function 
-
+3) when the user enters the username and submits, we trigger the connect function
 Connect function get's the name , connects to the websocket.
 
+var test = document.querySelector("#messageArea");
+for (let item of test.children) { console.log(item.firstChild.data)}
 
 */
+

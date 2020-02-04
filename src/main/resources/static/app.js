@@ -26,7 +26,7 @@ function connect (event) {
 
     // Create the connection with websocket
    var socket = new SockJS('http://localhost:8400/gs-guide-websocket');
-    // var socket = new SockJS('http://localhost:8762/chat/gs-guide-websocket');
+    // var socket = new SockJS('http://localhost:8762/chat/gs-guide-websocket');  when testing the microservices (not used)
     stompClient = Stomp.over(socket);
 
 
@@ -46,8 +46,7 @@ function onConnected (){
 
     // Subscribe to "/topic/greetings" for new messages
     stompClient.subscribe('/topic/greetings', onMessageReceived);
-//    var url = "http://localhost:8400/chatlog";
-    var url = "http://localhost:8762/chat/chatlog";
+//    var url = "http://localhost:8762/chat/chatlog"; when testing the microservices (not used)
     var url = "http://localhost:8400/chatlog";
 
     axios.get(url)
