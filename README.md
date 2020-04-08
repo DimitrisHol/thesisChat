@@ -1,6 +1,6 @@
 # Building a Webchat on Monolithic Arthitecture
 
-The main goal of this project is to compare it to the microservices architecture which can be found here : [Microservices](https://github.com/DimitrisHol/thesis-microservices/)
+The main goal of this project is to compare it to the microservices architecture which can be found here : [Microservices](https://github.com/DimitrisHol/chat-microservices/)
 
 ### This is a full stack web chat messenger. Technology Stack : 
 
